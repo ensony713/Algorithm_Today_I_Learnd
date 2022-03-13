@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stack>
-#define MAX 1000005
+#define MAX 1000003
 using namespace std;
 
 int N, answer[MAX] = { 0 }, A[MAX], index = 0, lbn = 1;
