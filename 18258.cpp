@@ -58,6 +58,9 @@ string command;
 int N = 0, x = 0;
 
 int main() {
+	cin.tie(NULL);
+	ios_base::sync_with_stdio(false);
+
 	cin >> N;
 	for (int i = 0; i < N; i++) {
 		cin >> command;
