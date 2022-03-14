@@ -58,8 +58,8 @@ string command;
 int N = 0, x = 0;
 
 int main() {
-	cin.tie(NULL);
-	ios_base::sync_with_stdio(false);
+	cin.tie(NULL); // 입출력 연결을 끊어서 입력 시 출력 버퍼를 비우는 것을 중단
+	ios_base::sync_with_stdio(false); // C의 입출력(printf, scanf)와 C++의 입출력(cout, cin)의 연동을 끊는다 - 두 입출력 중복 사용 불가능
 
 	cin >> N;
 	for (int i = 0; i < N; i++) {
