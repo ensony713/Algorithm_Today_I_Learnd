@@ -3,69 +3,57 @@
 #define MAX 2000000
 using namespace std;
 
-class Queue {
-private:
-	int num[MAX] = { 0 };
-	int start, end, tmp;
+int num[MAX] = { 0 };
+int start, q_end, tmp;
 
-	int set(int index) {
-		index = index % MAX;
-		if (index < 0)
-			index += MAX;
-		return index;
-	}
+int set(int index) {
+	index = index % MAX;
+	if (index < 0)
+		index += MAX;
+	return index;
+}
 
-public:
-	Queue() {
-		this->start = 0;
-		this->end = 0;
-		this->tmp = 0;
-	}
+int empty() {
+	if (start == q_end)
+		return 1;
+	else
+		return 0;
+}
 
-	int empty() {
-		if (this->start == this->end)
-			return 1;
-		else
-			return 0;
-	}
+void push(int a) {
+	num[q_end] = a;
+	q_end = set(q_end + 1);
+	return;
+}
 
-	void push(int x) {
-		this->num[this->end] = x;
-		this->end = this->set(this->end + 1);
-		return;
-	}
+int pop() {
+	if (empty())
+		return -1;
 
-	int pop() {
-		if (this->empty())
-			return -1;
+	tmp = num[start];
+	start = set(start + 1);
+	return tmp;
+}
 
-		this->tmp = num[this->start];
-		this->start = this->set(this->start + 1);
-		return this->tmp;
-	}
+int size() {
+	if (q_end >= start)
+		return q_end - start;
+	else
+		return MAX + q_end - start;
+}
 
-	int size() {
-		if (this->end >= this->start)
-			return this->end - this->start;
-		else
-			return MAX + this->end - this->start;
-	}
+int front() {
+	if (empty())
+		return -1;
+	return num[start];
+}
 
-	int front() {
-		if (this->empty())
-			return -1;
-		return this->num[this->start];
-	}
+int back() {
+	if (empty())
+		return -1;
+	return  num[q_end - 1];
+}
 
-	int back() {
-		if (this->empty())
-			return -1;
-		return this->num[this->end - 1];
-	}
-
-};
-
-Queue q;
 string command;
 int N = 0, x = 0;
 
@@ -76,18 +64,18 @@ int main() {
 
 		if (command == "push") {
 			cin >> x;
-			q.push(x);
+			push(x);
 		}
 		else if (command == "pop")
-			cout << q.pop() << "\n";
+			cout << pop() << "\n";
 		else if (command == "size")
-			cout << q.size() << "\n";
+			cout << size() << "\n";
 		else if (command == "empty")
-			cout << q.empty() << "\n";
+			cout << empty() << "\n";
 		else if (command == "front")
-			cout << q.front() << "\n";
+			cout << front() << "\n";
 		else if (command == "back")
-			cout << q.back() << "\n";
+			cout << back() << "\n";
 	}
 	return 0;
 }
