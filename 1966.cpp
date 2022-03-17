@@ -25,17 +25,18 @@ void swap(int a, int b) {
 }
 
 void insert(int index, int x) {
-	q.heap[q.size].index = index;
-	q.heap[q.size++].value = x;
+	q.heap[++q.size].index = index;
+	q.heap[q.size].value = x;
 	int i = q.size;
-	while ((i >= 1) && (q.heap[i / 2].value < q.heap[i].value)) {
+	while ((i > 1) && (q.heap[i / 2].value < q.heap[i].value)) {
 		swap(i / 2, i);
 		i = i / 2;
 	}
 }
 
-int delete_heap() {
-	int child = 2, parent = 1, item = q.heap[1].index;
+element delete_heap() {
+	int child = 2, parent = 1;
+	element item = q.heap[1];
 	q.heap[1].value = q.heap[q.size].value;
 	q.heap[1].index = q.heap[q.size--].index;
 	while (child <= q.size) {
@@ -53,8 +54,9 @@ int delete_heap() {
 
 int main() {
 	int temp, result = 1;
-	//cin >> T;
-	T = 1;
+	element tmp;
+	cin >> T;
+	//T = 1;
 	for (int i = 0; i < T; i++) {
 		q.size = 0;
 
@@ -63,13 +65,13 @@ int main() {
 			cin >> temp;
 			insert(i, temp);
 		}
+
 		while (1) {
-			temp = delete_heap();
-			if (temp == M) break;
-			cout << temp << " is not " << M << "\n";
+			tmp = delete_heap();
+			cout << "pop form heap " << tmp.index << ", " << tmp.value << "\n";
+			if (tmp.index == M) break;
 			result++;
 		}
-		
 		cout << result << "\n";
 	}
 	return 0;
