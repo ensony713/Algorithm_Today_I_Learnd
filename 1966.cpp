@@ -1,78 +1,122 @@
 #include <iostream>
-#define MAX 110
+#define MAX 105
 using namespace std;
 
 typedef struct {
-	int value;
+	int num;
 	int index;
 }element;
 
-typedef struct {
-	element heap[MAX];
-	int size;
-} type_heap;
-
-type_heap q;
-int T, N, M, tmp1, tmp2;
-
-void swap(int a, int b) {
-	tmp1 = q.heap[a].value;
-	tmp2 = q.heap[a].index;
-	q.heap[a].value = q.heap[b].value;
-	q.heap[a].index = q.heap[b].index;
-	q.heap[b].value = tmp1;
-	q.heap[b].index = tmp2;
-}
-
-void insert(int index, int x) {
-	q.heap[++q.size].index = index;
-	q.heap[q.size].value = x;
-	int i = q.size;
-	while ((i > 1) && (q.heap[i / 2].value < q.heap[i].value)) {
-		swap(i / 2, i);
-		i = i / 2;
+class Queue {
+private:
+	int start, end_, tmp;
+	element value[MAX] = { 0 };
+	int set(int index) {
+		index = index % MAX;
+		if (index < 0)
+			index += MAX;
+		return index;
 	}
-}
-
-element delete_heap() {
-	int child = 2, parent = 1;
-	element item = q.heap[1];
-	q.heap[1].value = q.heap[q.size].value;
-	q.heap[1].index = q.heap[q.size--].index;
-	while (child <= q.size) {
-		if ((q.heap[child + 1].value < q.heap[child].value) && (child + 1 <= q.size))
-			child++;
-		if (q.heap[child].value > q.heap[parent].value) {
-			swap(child, parent);
-			parent = child;
-			child = parent * 2;
-		}
-		else break;
+public:
+	Queue() {
+		this->start = 0;
+		this->end_ = 0;
+		this->tmp = 0;
 	}
-	return item;
-}
+
+	int empty() {
+		if (this->start == this->end_)
+			return 1;
+		else
+			return 0;
+	}
+
+	void push(int i, int x) {
+		this->value[this->end_].num = x;
+		this->value[this->end_].index = i;
+		this->end_ = this->set(this->end_ + 1);
+		return;
+	}
+
+	int pop(int & i) { // i에 index, 가중치 return
+		if (this->empty())
+			return -1;
+
+		this->tmp = value[this->start].num;
+		i = value[this->start].index;
+		this->start = this->set(this->start + 1);
+		return this->tmp;
+	}
+
+	int size() {
+		if (this->end_ >= this->start)
+			return this->end_ - this->start;
+		else
+			return MAX + this->end_ - this->start;
+	}
+
+	int front() {
+		if (this->empty())
+			return -1;
+		return this->value[this->start].index;
+	}
+
+	int back() {
+		if (this->empty())
+			return -1;
+		return this->value[this->end_ - 1].index;
+	}
+
+	void show() {
+		for (int i = this->start; i < this->end_; i = this->set(i + 1))
+			cout << "(" << this->value[i].index << ", " << this->value[i].num << ") ";
+		cout << "\n";
+	}
+
+	int max() {
+		int max_value = -1;
+		if (this->empty())
+			return -1;
+		for (int i = this->start; i != this->end_; i = this->set(i + 1))
+			max_value = max_value < this->value[i].num ? this->value[i].num : max_value;
+		return max_value;
+	}
+
+	void reset() {
+		this->start = 0;
+		this->end_ = 0;
+	}
+};
+
+int N, T, M, v, maximum = -1, result, num;
+Queue q;
 
 int main() {
-	int temp, result = 1;
-	element tmp;
 	cin >> T;
-	//T = 1;
-	for (int i = 0; i < T; i++) {
-		q.size = 0;
+	while (T > 0) {
+		q.reset();
+		result = 1;
 
 		cin >> N >> M;
 		for (int i = 0; i < N; i++) {
-			cin >> temp;
-			insert(i, temp);
+			cin >> v;
+			q.push(i, v);
 		}
-
-		while (1) {
-			tmp = delete_heap();
-			cout << "pop form heap " << tmp.index << ", " << tmp.value << "\n";
-			if (tmp.index == M) break;
-			result++;
+		
+		while (!q.empty()) {
+			maximum = q.max();
+			num = q.pop(v);
+			if (num == maximum && v == M) {
+				break;
+			}
+			else if (num != maximum) {
+				q.push(v, num);
+			}
+			else
+				result++;
 		}
 		cout << result << "\n";
+		T--;
 	}
 	return 0;
 }
