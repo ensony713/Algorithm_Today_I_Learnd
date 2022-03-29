@@ -44,6 +44,8 @@ public:
 };
 
 int main() {
+	cin.tie(NULL);
+	ios_base::sync_with_stdio(false);
 	Divide_paper paper;
 	int tmp;
 	cin >> tmp;
