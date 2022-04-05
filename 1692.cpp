@@ -8,9 +8,9 @@ long long pow(long long b) {
 	
 	long long tmp = pow(b / 2) % C;
 	if ((b % 2) == 0)
-		return ((tmp % C) * (tmp % C)) % C;
+		return tmp % C * tmp % C;
 	else
-		return ((tmp % C) * (tmp % C) * (A % C)) % C;
+		return tmp % C * tmp % C * (A % C) % C;
 }
 
 int main() {
