@@ -2,121 +2,109 @@
 #define MAX 105
 using namespace std;
 
-typedef struct {
-	int num;
-	int index;
-}element;
-
 class Queue {
-private:
-	int start, end_, tmp;
-	element value[MAX] = { 0 };
-	int set(int index) {
-		index = index % MAX;
-		if (index < 0)
-			index += MAX;
-		return index;
+	int front, end;
+	int data[MAX] = { 0 };
+	int priority[MAX] = { 0 };
+
+	int set(int i) {
+		i += MAX;
+		i = i % MAX;
+		return i;
 	}
+
 public:
+	bool isMax(int pri) {
+		for (int i = front; i != end; i = set(i + 1)) {
+			if (pri < priority[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	void init() {
+		front = 0;
+		end = 0;
+	}
+
 	Queue() {
-		this->start = 0;
-		this->end_ = 0;
-		this->tmp = 0;
+		front = 0;
+		end = 0;
 	}
 
-	int empty() {
-		if (this->start == this->end_)
-			return 1;
-		else
-			return 0;
+	void push(int x, int m) {
+		data[end] = x;
+		priority[end] = m;
+		end = set(end + 1);
 	}
 
-	void push(int i, int x) {
-		this->value[this->end_].num = x;
-		this->value[this->end_].index = i;
-		this->end_ = this->set(this->end_ + 1);
-		return;
+	int pop(int & pri) {
+		pri = priority[front];
+		int tmp = data[front];
+		front = set(front + 1);
+		return tmp;
 	}
 
-	int pop(int & i) { // i에 index, 가중치 return
-		if (this->empty())
-			return -1;
+	int print() {
+		int pri = 0;
+		while (!isMax(front)) {
+			push(pop(pri), pri);
+		}
 
-		this->tmp = value[this->start].num;
-		i = value[this->start].index;
-		this->start = this->set(this->start + 1);
-		return this->tmp;
+		return pop(pri);
 	}
 
 	int size() {
-		if (this->end_ >= this->start)
-			return this->end_ - this->start;
-		else
-			return MAX + this->end_ - this->start;
+		if (front > end) return MAX + (end - front);
+		return end - front;
 	}
 
-	int front() {
-		if (this->empty())
-			return -1;
-		return this->value[this->start].index;
-	}
-
-	int back() {
-		if (this->empty())
-			return -1;
-		return this->value[this->end_ - 1].index;
-	}
-
-	void show() {
-		for (int i = this->start; i < this->end_; i = this->set(i + 1))
-			cout << "(" << this->value[i].index << ", " << this->value[i].num << ") ";
-		cout << "\n";
-	}
-
-	int max() {
-		int max_value = -1;
-		if (this->empty())
-			return -1;
-		for (int i = this->start; i != this->end_; i = this->set(i + 1))
-			max_value = max_value < this->value[i].num ? this->value[i].num : max_value;
-		return max_value;
-	}
-
-	void reset() {
-		this->start = 0;
-		this->end_ = 0;
+	bool empty() {
+		if (front == end) { return true; }
+		return false;
 	}
 };
 
-int N, T, M, v, maximum = -1, result, num;
-Queue q;
+Queue printer;
 
-int main() {
-	cin >> T;
-	while (T > 0) {
-		q.reset();
-		result = 1;
+int main(int argc, char** argv) {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
 
-		cin >> N >> M;
-		for (int i = 0; i < N; i++) {
-			cin >> v;
-			q.push(i, v);
+	int t, n, doc, input, count = 0, out = -1, pri;
+	bool ismax;
+	cin >> t;
+
+	while (t-- > 0) {
+		cin >> n >> doc;
+		count = 0;
+		printer.init();
+
+		for (int i = 0; i < n; i++) {
+			cin >> input;
+			printer.push(i, input);
 		}
-		
-		while (!q.empty()) {
-			maximum = q.max();
-			num = q.pop(v);
-			if (num == maximum && v == M) {
+
+		while (!printer.empty()) {
+
+			out = printer.pop(pri);
+			ismax = printer.isMax(pri);
+
+			if (ismax && doc == out) {
 				break;
 			}
-			else if (num != maximum) {
-				q.push(v, num);
+			else if (ismax) {
+				count++;
 			}
-			else
-				result++;
+			else {
+				printer.push(out, pri);
+			}
 		}
-		cout << result << "\n";
-		T--;
+
+		cout << count << '\n';
 	}
+
 	return 0;
 }
