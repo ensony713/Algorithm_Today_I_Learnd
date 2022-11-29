@@ -3,108 +3,137 @@
 using namespace std;
 
 class Deque {
-private:
-	int value[MAX] = { 0 };
-	int head, tail, tmp;
+	
+	int f, b;
+	int data[MAX] = { 0 };
+
 	int set(int i) {
-		i = i % MAX;
-		if (i < 0)
-			i += MAX;
+		i += MAX;
+		i %= MAX;
 		return i;
 	}
+
 public:
 	Deque() {
-		this->head = 0;
-		this->tail = 0;
-		this->tmp = 0;
+		f = 0;
+		b = 0;
 	}
 
-	int empty() {
-		if (this->head == this->tail)
-			return 1;
-		else
-			return 0;
-	}
-	int size() {
-		if (this->empty())
-			return 0;
-		if (this->tail > this->head)
-			return this->tail - this->head;
-		else
-			return MAX - (this->head - this->tail);
-	}
+    void push_front(int x) {
+        f = set(f - 1);
+        data[f] = x;
+    }
 
-	int front() {
-		if (this->empty())
-			return -1;
-		return this->value[this->head];
-	}
-	int back() {
-		if (this->empty())
-			return -1;
-		return this->value[this->set(this->tail - 1)];
-	}
+    void push_back(int x) {
+        data[b] = x;
+        b = set(b + 1);
+    }
 
-	void push_front(int x) {
-		this->head = this->set(this->head - 1);
-		this->value[this->head] = x;
-	}
-	void push_back(int x) {
-		this->value[this->tail] = x;
-		this->tail = this->set(this->tail + 1);
-	}
+    int size() {
+        if (f > b) { return MAX + (b - f); }
+        return b - f;
+    }
 
-	int pop_front() {
-		if (this->empty())
-			return -1;
-		tmp = this->value[this->head];
-		this->head = this->set(this->head + 1);
-		return tmp;
-	}
-	int pop_back() {
-		if (this->empty())
-			return -1;
-		this->tail = this->set(this->tail - 1);
-		tmp = this->value[this->tail];
-		return tmp;
-	}
+    int empty() {
+        if (f == b) { return 1; }
+        return 0;
+    }
 
-	int search(int n) {
-		int counter = 0;
-		if (this->empty())
-			return -1;
-		for (int i = this->head; i != this->tail; i = this->set(i + 1)) {
-			if (this->value[i] == n)
-				return counter;
-			counter++;
-		}
-	}
+    int front() {
+        if (empty()) { return -1; }
+        return data[f];
+    }
+
+    int back() {
+        if (empty()) { return -1; }
+        return data[set(b - 1)];
+    }
+
+    int pop_back() {
+        if (empty()) { return -1; }
+        b = set(b - 1);
+        return data[b];
+    }
+
+    int pop_front() {
+        if (empty()) { return -1; }
+        int tmp = data[f];
+        f = set(f + 1);
+        return tmp;
+    }
+
+    int find_front(int x) {
+        int i = 0;
+        while (data[set(i + f)] != x && i < size()) {
+            i++;
+        }
+        return i;
+    }
+
+    void show() {
+        for (int i = 0; i < size(); i++) {
+            cout << data[set(f + i)] << ' ';
+        }
+        cout << '\n';
+    }
+
+    int op2(int x) {
+        int c = 0;
+
+        while (data[f] != x) {
+            c++;
+            push_back(pop_front());
+        }
+        pop_front();
+
+        return c;
+    }
+
+    int op3(int x) {
+        int c = 0;
+
+        while (data[f] != x) {
+            c++;
+            push_front(pop_back());
+        }
+        pop_front();
+
+        return c;
+    }
 };
 
-int N, M, num, term, result = 0;
 Deque q;
 
-int main() {
-	cin >> N >> M;
-	for (int i = 1; i <= N; i++)
-		q.push_back(i);
+int main(int argc, char** argv) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
 
-	for (int i = 0; i < M; i++) {
-		cin >> num;
-		term = q.search(num);
+    int n, m, front, result = 0;
+    int data[MAX] = { 0 };
+    cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        cin >> data[i];
+    }
 
-		for (; q.front() != num;) {
-			if (term < q.size() - term) {
-				q.push_back(q.pop_front());
-				result++;
-			}
-			else {
-				q.push_front(q.pop_back());
-				result++;
-			}
-		}
-		q.pop_front();
-	}
-	cout << result << "\n";
-	return 0;
+    for (int i = 1; i <= n; i++) {
+        q.push_back(i);
+    }
+
+    for (int i = 0; i < m; i++) {
+        front = q.find_front(data[i]);
+
+        cout << front << " : ";
+        q.show();
+
+        if (front <= (q.size() / 2)) {
+            result += q.op2(data[i]);
+        }
+        else {
+            result += q.op3(data[i]);
+        }
+    }
+
+    cout << result;
+    return 0;
 }
