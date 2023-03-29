@@ -2,10 +2,10 @@
 #define MAX 102
 using namespace std;
 
-class MiniHeap { // Èü Á¤·Ä
+class MiniHeap { // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 private:
-	int size = 0; // ¿ä¼Ò °³¼ö
-	int list[MAX] = { 0 }; // 1ºÎÅÍ »ç¿ë
+	int size = 0; // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	int list[MAX] = { 0 }; // 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 public:
 	void insert(int n) {
